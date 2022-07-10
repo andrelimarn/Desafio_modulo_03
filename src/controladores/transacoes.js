@@ -123,34 +123,30 @@ const excluirTransacao = async (req, res) => {
 
 const extratoDeTransacoes = async (req, res) => {
     const { usuario } = req;
-
+    
     try {
-        const queryEntradaSaida = 'SELECT tipo, SUM (valor) FROM transacoes WHERE usuario_id = $1 GROUP BY tipo'
-        const { rows, rowCount } = await conexao.query(queryEntradaSaida, [usuario.id]);
-
-        if (rowCount === 0) {
-            return res.status(404).json(tipoSaida, tipoEntrada)
-        };
-
-
         let tipoSaida = 0
         let tipoEntrada = 0
-
+        const queryEntradaSaida = 'SELECT tipo, SUM (valor) FROM transacoes WHERE usuario_id = $1 GROUP BY tipo'
+        const { rows, rowCount } = await conexao.query(queryEntradaSaida, [usuario.id]);
+        
+        if (rowCount === 0) {
+            return res.status(404).json({'Entrada': tipoEntrada, 'Saida': tipoSaida})
+        };
+        
+        
         rows.map(row => {
+            
+            
             row.tipo === 'entrada' ? tipoEntrada = row.sum : tipoSaida = row.sum;
-            // if (row.tipo === 'entrada') {
-            //     tipoEntrada = row.sum
-            // } else {
-            //     tipoSaida = row.sum
-            // }
+            
         })
 
-        console.log(rows);
-        return res.status(200).json({ 'Entrada': tipoEntrada, 'Saida': tipoSaida })
+              return res.status(200).json({ 'Entrada': tipoEntrada, 'Saida': tipoSaida })
 
 
     } catch (e) {
-        return res.status(400).json({'Entrada': tipoEntrada, 'Saida': tipoSaida });
+        return res.status(400).json(e.message);
 
     }
 

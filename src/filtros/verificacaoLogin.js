@@ -22,9 +22,9 @@ const verificacaoLogin = async (req, res, next) => {
 
         }
 
-        const { senha, ...usuario } = rows[0];
+        const { senha, ...dadosUsuario } = rows[0];
 
-        req.usuario = usuario;
+        req.usuario = dadosUsuario;
 
         next();
     } catch (e) {
