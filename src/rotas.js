@@ -9,15 +9,17 @@ const categorias = require("./controladores/categorias")
 
 
 rotas.get('/categorias', categorias.listarCategorias)
-
 rotas.post("/usuario", usuarios.cadastroUsuarios);
 rotas.post("/login", login.login);
-rotas.use(verificacaoLogin)
-rotas.get('/transacao', transacao.transacoesUsuarioLogado)
-rotas.get('/transacao/:id', transacao.detalharTransacoes)
+
+rotas.use(verificacaoLogin);
+
+rotas.get('/transacao', transacao.transacoesUsuarioLogado);
+rotas.get('/transacao/extrato', transacao.extratoDeTransacoes);
+rotas.get('/transacao/:id', transacao.detalharTransacoes);
 rotas.get('/usuario', usuarios.detalharUsuarioLogado);
-rotas.post("/transacao", transacao.transacoes);
-rotas.patch("/transacao/:id", transacao.alterarTransacao);
+rotas.post("/transacao", transacao.cadastrarTransacoes);
+rotas.put("/transacao/:id", transacao.alterarTransacao);
 rotas.put('/usuario', usuarios.alterarCadastroUsuario);
 rotas.delete('/transacao/:id', transacao.excluirTransacao);
 

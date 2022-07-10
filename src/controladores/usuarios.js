@@ -59,7 +59,7 @@ const alterarCadastroUsuario = async (req, res) => {
         const queryVerificarEmail = "SELECT * FROM  usuarios WHERE email = $1";
         const {rowCount: quantidadeUsuario } = await conexao.query(queryVerificarEmail, [email])
 
-        if (quantidadeUsuario > 0 && email != usuario.email) {
+        if (quantidadeUsuario > 0 && email !== usuario.email) {
             return res.status(400).json("Já existe usuário cadastrado com o e-mail informado.");
         }
 

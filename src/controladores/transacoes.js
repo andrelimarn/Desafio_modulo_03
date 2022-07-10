@@ -30,7 +30,7 @@ const transacoesUsuarioLogado = async (req, res) => {
 
 }
 
-const transacoes = async (req, res) => {
+const cadastrarTransacoes = async (req, res) => {
     const { descricao, valor, data, categoria_id, tipo } = req.body;
     const { usuario } = req;
 
@@ -57,13 +57,16 @@ const transacoes = async (req, res) => {
 }
 
 const alterarTransacao = async (req, res) => {
-    const { descricao, valor, data, categoria_id } = req.body;
+    const { descricao, valor, data, categoria_id, tipo } = req.body;
     const { usuario } = req;
     const { id: idTransacao } = req.params;
 
 
-    if (!descricao || !valor || !data || !categoria_id) {
+    if (!descricao || !valor || !data || !categoria_id || !tipo) {
         return res.status(404).json('Todos os campos obrigatórios devem ser informados.');
+    }
+    if (tipo !== 'entrada' && tipo !== 'saida') {
+        return res.status(404).json('deve ser informado o tipo de entrada ou saida')
     }
     try {
 
@@ -118,5 +121,47 @@ const excluirTransacao = async (req, res) => {
 
 }
 
+const extratoDeTransacoes = async (req, res) => {
+    const { usuario } = req;
 
-module.exports = { transacoes, alterarTransacao, excluirTransacao, transacoesUsuarioLogado, detalharTransacoes }
+    try {
+        const queryEntradaSaida = 'SELECT tipo, SUM (valor) FROM transacoes WHERE usuario_id = $1 GROUP BY tipo'
+        const { rows, rowCount } = await conexao.query(queryEntradaSaida, [usuario.id]);
+
+        if (rowCount === 0) {
+            return res.status(404).json(tipoSaida, tipoEntrada)
+        };
+
+
+        let tipoSaida = 0
+        let tipoEntrada = 0
+
+        rows.map(row => {
+            row.tipo === 'entrada' ? tipoEntrada = row.sum : tipoSaida = row.sum;
+            // if (row.tipo === 'entrada') {
+            //     tipoEntrada = row.sum
+            // } else {
+            //     tipoSaida = row.sum
+            // }
+        })
+
+        console.log(rows);
+        return res.status(200).json({ 'Entrada': tipoEntrada, 'Saida': tipoSaida })
+
+
+    } catch (e) {
+        return res.status(400).json(e.message);
+
+    }
+
+}
+
+
+module.exports = {
+    cadastrarTransacoes,
+    alterarTransacao,
+    excluirTransacao,
+    transacoesUsuarioLogado,
+    detalharTransacoes,
+    extratoDeTransacoes
+}
