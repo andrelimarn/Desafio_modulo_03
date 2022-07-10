@@ -79,9 +79,9 @@ const alterarTransacao = async (req, res) => {
         }
 
         const queryTransacao =
-            'UPDATE transacoes SET descricao = $1, valor = $2, data = $3, categoria_id = $4 WHERE id = $5 and usuario_id = $6';
+            'UPDATE transacoes SET descricao = $1, valor = $2, data = $3, categoria_id = $4, tipo = $5 WHERE id = $6 and usuario_id = $7';
 
-        const transacao = await conexao.query(queryTransacao, [descricao, valor, data, categoria_id, idTransacao, usuario.id]);
+        const transacao = await conexao.query(queryTransacao, [descricao, valor, data, categoria_id, tipo, idTransacao, usuario.id]);
 
         if (transacao.rowCount === 0) {
             return res.status(400).json('Transação nao efetuada');
@@ -150,7 +150,7 @@ const extratoDeTransacoes = async (req, res) => {
 
 
     } catch (e) {
-        return res.status(400).json(e.message);
+        return res.status(400).json({'Entrada': tipoEntrada, 'Saida': tipoSaida });
 
     }
 
