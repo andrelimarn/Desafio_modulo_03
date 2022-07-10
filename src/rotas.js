@@ -8,7 +8,7 @@ const categorias = require("./controladores/categorias")
 
 
 
-rotas.get('/categorias', categorias.listarCategorias)
+rotas.get('/categoria', categorias.listarCategorias)
 rotas.post("/usuario", usuarios.cadastroUsuarios);
 rotas.post("/login", login.login);
 
