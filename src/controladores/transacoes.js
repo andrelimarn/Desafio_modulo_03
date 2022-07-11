@@ -20,14 +20,13 @@ const transacoesUsuarioLogado = async (req, res) => {
     const { usuario } = req;
 
     try {
-        const queryTransacaoLogado = 'SELECT * FROM transacoes WHERE usuario_id = $1';
+        const queryTransacaoLogado = 'SELECT t.id, t.tipo, t.descricao, t.valor,t.data, t.usuario_id, t.categoria_id,c.descricao As categoria_nome FROM transacoes As t join categorias AS c on categoria_id = c.id WHERE usuario_id = $1';
         const listaDeTransacoes = await conexao.query(queryTransacaoLogado, [usuario.id]);
         return res.status(200).json(listaDeTransacoes.rows);
     } catch (e) {
         return res.status(400).json(e.message);
 
     }
-
 }
 
 const cadastrarTransacoes = async (req, res) => {
@@ -130,9 +129,7 @@ const extratoDeTransacoes = async (req, res) => {
         const queryEntradaSaida = 'SELECT tipo, SUM (valor) FROM transacoes WHERE usuario_id = $1 GROUP BY tipo'
         const { rows, rowCount } = await conexao.query(queryEntradaSaida, [usuario.id]);
         
-        if (rowCount === 0) {
-            return res.status(404).json({'entrada': tipoEntrada, 'saida': tipoSaida})
-        };
+      
         
         
         rows.map(row => {
